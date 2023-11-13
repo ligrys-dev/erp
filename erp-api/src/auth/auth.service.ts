@@ -4,6 +4,8 @@ import { firstValueFrom } from 'rxjs';
 import { UsersService } from 'src/modules/users/users.service';
 import { comparePwd } from 'src/utils/handle-pwd';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { SaveUserInterface } from 'src/common/types';
 
 @Injectable()
 export class AuthService {
@@ -11,12 +13,14 @@ export class AuthService {
     private readonly httpService: HttpService,
     private readonly usersService: UsersService,
     private configService: ConfigService,
+    private jwtService: JwtService,
   ) {}
 
-  async logToAllegro(): Promise<{ access_token: string }> {
+  async signInIntoAllegro(): Promise<{ access_token: string }> {
     const authHeader = `Basic ${Buffer.from(
-      `${this.configService.get('ALLEGRO_CLIENT_ID')}
-      :${this.configService.get('ALLEGRO_CLIENT_SECET')}`,
+      `${this.configService.get('ALLEGRO_CLIENT_ID')}:${this.configService.get(
+        'ALLEGRO_CLIENT_SECRET',
+      )}`,
     ).toString('base64')}`;
 
     try {
@@ -38,5 +42,24 @@ export class AuthService {
       console.error(error);
       throw new Error('Something went wrong');
     }
+  }
+
+  async validateUser(usernameOrEmail: string, pwd: string) {
+    const user =
+      await this.usersService.findOneByUsernameOrEmail(usernameOrEmail);
+
+    if (user && (await comparePwd(pwd, user.pwdHash))) {
+      const { pwdHash, currentTokenId, ...result } = user;
+      return result;
+    }
+
+    return null;
+  }
+
+  async login(user: SaveUserInterface) {
+    const payload = { username: user.username, sub: user.id };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 }

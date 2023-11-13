@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { User } from './entities/users.entity';
 import { hashPwd } from 'src/utils/handle-pwd';
-import { DataSource } from 'typeorm';
+import { DataSource, FindOptionsWhere } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +19,13 @@ export class UsersService {
     return result;
   }
 
-  async findOne(id: string) {
-    return await User.findOne({ where: { id } });
+  async findOneById(id: string) {
+    return await User.findOneByOrFail({ id });
+  }
+
+  async findOneByUsernameOrEmail(usernameOrEmail: string) {
+    return await User.findOne({
+      where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+    });
   }
 }
