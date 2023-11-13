@@ -7,6 +7,6 @@ export class AuthController {
 
   @Get('/allegro')
   loginToAllegro() {
-    return this.authService.loginToAllegro();
+    return this.authService.logToAllegro();
   }
 }
