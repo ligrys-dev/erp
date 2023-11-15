@@ -9,12 +9,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getAuthConfig } from 'src/config/auth.config';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { BlacklistedToken } from './entities/blacklistedToken.entity';
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
     HttpModule,
     PassportModule,
+    TypeOrmModule.forFeature([BlacklistedToken]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -22,6 +26,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, RefreshTokenStrategy],
 })
 export class AuthModule {}
