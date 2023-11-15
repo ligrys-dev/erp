@@ -1,4 +1,4 @@
-import { type } from 'os';
+import { Role } from 'src/types';
 import {
   BaseEntity,
   Column,
@@ -22,8 +22,8 @@ export class User extends BaseEntity {
   @Column({ nullable: false })
   pwdHash: string;
 
-  @Column({ nullable: true, default: null })
-  currentTokenId: string | null;
+  @Column({ default: [Role.User] })
+  roles: Role;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

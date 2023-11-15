@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { User } from './entities/users.entity';
 import { hashPwd } from 'src/utils/handle-pwd';
-import { DataSource, FindOptionsWhere } from 'typeorm';
 
 @Injectable()
 export class UsersService {
