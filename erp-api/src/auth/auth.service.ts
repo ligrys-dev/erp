@@ -9,7 +9,7 @@ import { UsersService } from 'src/modules/users/users.service';
 import { comparePwd } from 'src/utils/handle-pwd';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { SaveUserEntity } from 'src/common/types';
+import { SaveUserEntity } from 'src/types';
 import { Request } from 'express';
 import { BlacklistedToken } from './entities/blacklistedToken.entity';
 import { LessThanOrEqual } from 'typeorm';
@@ -90,7 +90,8 @@ export class AuthService {
     };
   }
 
-  async refreshToken(oldToken: string) {
+  async refreshToken(req: Request) {
+    const oldToken = req.headers.authorization.split(' ')[1];
     const decodedToken = await this.jwtService.verifyAsync(oldToken, {
       secret: this.configService.get('JWT_SECRET'),
     });
