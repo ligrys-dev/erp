@@ -1,16 +1,15 @@
-import { Client } from 'src/modules/client/entities/client.entity';
-import { Firm } from 'src/modules/firm/entities/firm.entity';
-import { StockProduct } from 'src/modules/stock/entities/stock-product.entity';
 import {
   BaseEntity,
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Client } from 'src/modules/client/entities/client.entity';
+import { Firm } from 'src/modules/firm/entities/firm.entity';
+import { InvoiceProduct } from './invoice-product.entity';
 
 @Entity()
 export class Invoice extends BaseEntity {
@@ -20,7 +19,7 @@ export class Invoice extends BaseEntity {
   @Column()
   invoiceNumber: string;
 
-  @CreateDateColumn()
+  @Column()
   issueDate: Date;
 
   @Column()
@@ -43,7 +42,7 @@ export class Invoice extends BaseEntity {
   client: Client;
 
   // One invoice can have many products
-  @OneToMany(() => StockProduct, (stockProduct) => stockProduct.invoice)
+  @OneToMany(() => InvoiceProduct, (invoiceProduct) => invoiceProduct.invoice)
   @JoinColumn()
-  products: StockProduct[];
+  products: InvoiceProduct[];
 }

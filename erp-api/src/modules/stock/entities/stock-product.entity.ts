@@ -28,9 +28,4 @@ export class StockProduct extends BaseEntity {
 
   @Column({ type: 'double precision' })
   flatRateTax: FlatRateTax;
-
-  // Many products can be in one invoice
-  @ManyToOne(() => Invoice)
-  @JoinColumn()
-  invoice: Invoice;
 }

@@ -1,6 +1,7 @@
 import { Client } from 'src/modules/client/entities/client.entity';
 import { Firm } from 'src/modules/firm/entities/firm.entity';
 import { StockProduct } from 'src/modules/stock/entities/stock-product.entity';
+import { InvoiceProduct } from '../entities/invoice-product.entity';
 
 export class CreateInvoiceDto {
   invoiceNumber: string;
@@ -8,7 +9,7 @@ export class CreateInvoiceDto {
   deliveryDate: Date;
   paymentDate: Date;
   isPaid: boolean;
-  // firm: Firm;
-  // client: Client;
-  // products: StockProduct[];
+  firm: Firm;
+  client: Client;
+  products: InvoiceProduct[];
 }

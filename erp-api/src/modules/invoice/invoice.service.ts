@@ -7,6 +7,7 @@ import { assignProperties } from 'src/utils/assign-properties';
 @Injectable()
 export class InvoiceService {
   async create(createInvoiceDto: CreateInvoiceDto) {
+    //TODO change metod to create valid invoice, with firm, client and products
     const invoice = new Invoice();
     assignProperties(invoice, createInvoiceDto);
     return await invoice.save();
