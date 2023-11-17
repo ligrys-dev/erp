@@ -6,7 +6,7 @@ import { Firm } from './entities/firm.entity';
 import { Address } from 'src/common/entities/address.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Firm])],
+  imports: [TypeOrmModule.forFeature([Firm, Address])],
   controllers: [FirmController],
   providers: [FirmService],
   exports: [FirmService],
