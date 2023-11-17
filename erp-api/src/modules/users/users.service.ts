@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RegisterDto } from './dto/register.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/users.entity';
 import { hashPwd } from 'src/utils/handle-pwd';
 
@@ -7,7 +7,7 @@ import { hashPwd } from 'src/utils/handle-pwd';
 export class UsersService {
   constructor() {}
 
-  async register(user: RegisterDto) {
+  async register(user: CreateUserDto) {
     const registeredUser = new User();
     registeredUser.username = user.username;
     registeredUser.email = user.email;

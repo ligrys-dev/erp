@@ -22,8 +22,8 @@ export class User extends BaseEntity {
   @Column({ nullable: false })
   pwdHash: string;
 
-  @Column({ default: [Role.User] })
-  roles: Role;
+  @Column({ type: 'enum', enum: Role, array: true, default: [Role.User] })
+  roles: Role[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
