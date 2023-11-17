@@ -3,29 +3,53 @@ import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { Invoice } from './entities/invoice.entity';
 import { assignProperties } from 'src/utils/assign-properties';
+import { FirmService } from '../firm/firm.service';
+import { ClientService } from '../client/client.service';
+import { InvoiceProduct } from './entities/invoice-product.entity';
 
 @Injectable()
 export class InvoiceService {
+  constructor(
+    private firmService: FirmService,
+    private clientService: ClientService,
+  ) {}
+
   async create(createInvoiceDto: CreateInvoiceDto) {
-    //TODO change metod to create valid invoice, with firm, client and products
+    //FIXME check if working
+    const { firm, client, products, ...invoiceData } = createInvoiceDto;
+    const addedFirm = await this.firmService.findOne(firm.id);
+    const addedClient = await this.clientService.findOne(firm.id);
+
     const invoice = new Invoice();
-    assignProperties(invoice, createInvoiceDto);
-    return await invoice.save();
+    assignProperties(invoice, invoiceData);
+    invoice.firm = addedFirm;
+    invoice.client = addedClient;
+
+    const invoiceProducts = await products.map(async (product) => {
+      const prod = new InvoiceProduct();
+      assignProperties(prod, product);
+      return await prod.save();
+    });
+
+    return {
+      invoiceData: await invoice.save(),
+      invoiceProducts,
+    };
   }
 
-  findAll() {
-    return `This action returns all invoice`;
+  async findAll() {
+    return await Invoice.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} invoice`;
+  async findOne(id: string) {
+    return await Invoice.findOneByOrFail({ id });
   }
 
-  update(id: number, updateInvoiceDto: UpdateInvoiceDto) {
-    return `This action updates a #${id} invoice`;
+  async update(id: string, updateInvoiceDto: UpdateInvoiceDto) {
+    return await Invoice.update({ id }, updateInvoiceDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} invoice`;
+  async remove(id: string) {
+    return await Invoice.remove(await this.findOne(id));
   }
 }

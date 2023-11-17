@@ -12,19 +12,19 @@ export class ClientService {
     return await client.save();
   }
 
-  findAll() {
-    return `This action returns all client`;
+  async findAll() {
+    return await Client.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} client`;
+  async findOne(id: string) {
+    return await Client.findOneByOrFail({ id });
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    return `This action updates a #${id} client`;
+  async update(id: string, updateClientDto: UpdateClientDto) {
+    return await Client.update({ id }, updateClientDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} client`;
+  async remove(id: string) {
+    return await Client.remove(await this.findOne(id));
   }
 }

@@ -12,19 +12,19 @@ export class StockService {
     return await stockProduct.save();
   }
 
-  findAll() {
-    return `This action returns all stock`;
+  async findAll() {
+    return await StockProduct.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} stock`;
+  async findOne(id: string) {
+    return await StockProduct.findOneByOrFail({ id });
   }
 
-  update(id: number, updateStockDto: UpdateStockProductDto) {
-    return `This action updates a #${id} stock`;
+  async update(id: string, updateStockDto: UpdateStockProductDto) {
+    return await StockProduct.update({ id }, updateStockDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} stock`;
+  async remove(id: string) {
+    return await StockProduct.remove(await this.findOne(id));
   }
 }

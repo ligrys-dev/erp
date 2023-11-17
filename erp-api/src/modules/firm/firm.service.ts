@@ -12,19 +12,19 @@ export class FirmService {
     return await firm.save();
   }
 
-  findAll() {
-    return `This action returns all firm`;
+  async findAll() {
+    return await Firm.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} firm`;
+  async findOne(id: string) {
+    return await Firm.findOneByOrFail({ id });
   }
 
-  update(id: number, updateFirmDto: UpdateFirmDto) {
-    return `This action updates a #${id} firm`;
+  async update(id: string, updateFirmDto: UpdateFirmDto) {
+    return await Firm.update({ id }, updateFirmDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} firm`;
+  async remove(id: string) {
+    return await Firm.remove(await this.findOne(id));
   }
 }

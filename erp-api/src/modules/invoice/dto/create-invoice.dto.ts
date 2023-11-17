@@ -1,6 +1,5 @@
 import { Client } from 'src/modules/client/entities/client.entity';
 import { Firm } from 'src/modules/firm/entities/firm.entity';
-import { StockProduct } from 'src/modules/stock/entities/stock-product.entity';
 import { InvoiceProduct } from '../entities/invoice-product.entity';
 
 export class CreateInvoiceDto {
