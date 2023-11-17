@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { FirmService } from './firm.service';
 import { CreateFirmDto } from './dto/create-firm.dto';
 import { UpdateFirmDto } from './dto/update-firm.dto';
@@ -19,16 +27,16 @@ export class FirmController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.firmService.findOne(+id);
+    return this.firmService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateFirmDto: UpdateFirmDto) {
-    return this.firmService.update(+id, updateFirmDto);
+    return this.firmService.update(id, updateFirmDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.firmService.remove(+id);
+    return this.firmService.remove(id);
   }
 }
