@@ -22,7 +22,8 @@ export class Firm extends BaseEntity {
   @Column({ nullable: true })
   bankAccountNumber: number;
 
-  // @ManyToOne(() => Address) // One firm has one address
-  // @JoinColumn()
-  // address: Address;
+  //FIXME
+  @ManyToOne(() => Address)
+  @JoinColumn()
+  address: Address;
 }

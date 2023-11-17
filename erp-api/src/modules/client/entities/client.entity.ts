@@ -16,7 +16,8 @@ export class Client extends BaseEntity {
   @Column()
   name: string;
 
-  // @ManyToOne(() => Address) // One client has one address
-  // @JoinColumn()
-  // address: Address;
+  // FIXME
+  @ManyToOne(() => Address) // One client has one address
+  @JoinColumn()
+  address: Address;
 }
