@@ -1,8 +1,10 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+
 export const getTypeOrmConfig = (configService: ConfigService) =>
   ({
-    type: 'mysql',
+    type: 'postgres',
     host: configService.get('DB_HOST'),
     port: configService.get('DB_PORT'),
     username: configService.get('DB_USERNAME'),
@@ -13,4 +15,5 @@ export const getTypeOrmConfig = (configService: ConfigService) =>
     bigNumberStrings: false,
     synchronize: true,
     logging: true,
+    namingStrategy: new SnakeNamingStrategy(),
   }) as TypeOrmModuleOptions;
