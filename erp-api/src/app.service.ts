@@ -31,6 +31,9 @@ export class AppService {
         issueDate: new Date(Date.now()),
         paymentDate: new Date(Date.now() + 100000000000000),
         isPaid: false,
+        firm: await this.firmService.findOne(''),
+        client: await this.clientService.findOne(''),
+        products: [],
       }),
     };
     return obj;
