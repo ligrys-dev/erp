@@ -36,7 +36,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
 
     const isTokenBlacklisted = await this.authService.isTokenBlacklisted(token);
-    await this.authService.removeExpiredTokens();
 
     if (isTokenBlacklisted) return false;
 

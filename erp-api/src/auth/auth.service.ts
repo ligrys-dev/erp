@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -13,6 +14,8 @@ import { SaveUserEntity } from 'src/types';
 import { Request } from 'express';
 import { BlacklistedToken } from './entities/blacklistedToken.entity';
 import { LessThanOrEqual } from 'typeorm';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +24,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private configService: ConfigService,
     private jwtService: JwtService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async loginIntoAllegro(): Promise<{ access_token: string }> {
@@ -100,17 +104,26 @@ export class AuthService {
   }
 
   async logout(req: Request) {
-    const token = new BlacklistedToken();
-    token.token = req.headers.authorization.split(' ')[1];
-    await token.save();
+    const usedToken = req.headers.authorization.split(' ')[1];
+    const key = 'expired-tokens';
 
+    const blacklistedToken = new BlacklistedToken();
+    blacklistedToken.token = usedToken;
+    await blacklistedToken.save();
+
+    const usedTokens: string[] = (await this.cacheManager.get(key)) || [];
+    usedTokens.push(usedToken);
+    this.cacheManager.set(key, usedTokens);
+
+    await this.removeExpiredTokens();
     return { message: 'Succesfully logged out' };
   }
 
   async isTokenBlacklisted(token: string) {
-    return !!(await BlacklistedToken.findOne({
-      where: { token },
-    }));
+    const blacklistedTokens: string[] =
+      await this.cacheManager.get('expired-tokens');
+
+    return !!blacklistedTokens.find((el) => el === token);
   }
 
   async removeExpiredTokens() {
@@ -129,5 +142,3 @@ export class AuthService {
     );
   }
 }
-
-// createdAt: 2023-11-15T17:14:55.213Z,

@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { FirmService } from './modules/firm/firm.service';
 import { ClientService } from './modules/client/client.service';
 import { InvoiceService } from './modules/invoice/invoice.service';
 import { StockService } from './modules/stock/stock.service';
 import { FlatRateTax, VatRate } from './types';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class AppService {
@@ -12,6 +14,7 @@ export class AppService {
     private clientService: ClientService,
     private invoiceService: InvoiceService,
     private stockService: StockService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async test() {
@@ -38,6 +41,11 @@ export class AppService {
     };
     return obj;
   }
+
+  async test2() {
+    return await this.cacheManager.get('expired-tokens');
+  }
+
   getHello(): string {
     return 'Hello World!';
   }

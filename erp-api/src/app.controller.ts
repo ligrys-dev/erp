@@ -14,4 +14,9 @@ export class AppController {
   test() {
     return this.appService.test();
   }
+
+  @Get('/test2')
+  test2() {
+    return this.appService.test2();
+  }
 }
