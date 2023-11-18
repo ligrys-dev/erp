@@ -17,11 +17,13 @@ import { InvoiceModule } from './modules/invoice/invoice.module';
 import { StockModule } from './modules/stock/stock.module';
 import { getRedisConfig } from './config/redis.config';
 import { RedisCacheModule } from './common/cache/redis-cache.module';
+import { CronModule } from './common/cron/cron.module';
 
 @Module({
   imports: [
     DatabaseModule,
     RedisCacheModule,
+    CronModule,
     AuthModule,
     UsersModule,
     AllegroModule,
