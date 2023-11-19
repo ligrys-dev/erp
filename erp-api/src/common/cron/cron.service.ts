@@ -10,10 +10,10 @@ export class CronService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private authService: AuthService,
   ) {}
-
-  @Interval(30 * 60 * 1000)
   @CacheTTL(30 * 60 * 1000)
+  @Interval(30 * 60 * 1000)
   async refreshExpiredTokensCache() {
+    console.log('Refreshing blacklisted token in cache.');
     await this.cacheManager.del('expired-tokens');
     await this.authService.removeExpiredTokens();
     const tokens = await this.authService.getBlackListedTokens();

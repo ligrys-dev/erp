@@ -27,5 +27,6 @@ import { BlacklistedToken } from './entities/blacklistedToken.entity';
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy, RefreshTokenStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}
