@@ -4,13 +4,19 @@ import { InvoiceController } from './invoice.controller';
 import { Invoice } from './entities/invoice.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { InvoiceProduct } from './entities/invoice-product.entity';
-import { FirmService } from '../firm/firm.service';
-import { ClientService } from '../client/client.service';
+import { StockModule } from '../stock/stock.module';
+import { FirmModule } from '../firm/firm.module';
+import { ClientModule } from '../client/client.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Invoice, InvoiceProduct])],
+  imports: [
+    forwardRef(() => StockModule),
+    forwardRef(() => FirmModule),
+    forwardRef(() => ClientModule),
+    TypeOrmModule.forFeature([Invoice, InvoiceProduct]),
+  ],
   controllers: [InvoiceController],
-  providers: [InvoiceService, FirmService, ClientService],
+  providers: [InvoiceService],
   exports: [InvoiceService],
 })
 export class InvoiceModule {}

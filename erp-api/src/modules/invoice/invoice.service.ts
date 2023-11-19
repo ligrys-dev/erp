@@ -6,33 +6,56 @@ import { assignProperties } from 'src/utils/assign-properties';
 import { FirmService } from '../firm/firm.service';
 import { ClientService } from '../client/client.service';
 import { InvoiceProduct } from './entities/invoice-product.entity';
+import { CreateInvoiceProductDto } from './dto/create-invoice-product.dto';
+import { StockService } from '../stock/stock.service';
 
 @Injectable()
 export class InvoiceService {
   constructor(
     private firmService: FirmService,
     private clientService: ClientService,
+    private stockService: StockService,
   ) {}
 
+  async createInvoiceProduct(createInvoiceProductDto: CreateInvoiceProductDto) {
+    const invoiceProduct = new InvoiceProduct();
+    invoiceProduct.quantity = createInvoiceProductDto.quantity;
+    invoiceProduct.invoice = await this.findOne(
+      createInvoiceProductDto.invoiceId,
+    );
+    invoiceProduct.stockProduct = await this.stockService.findOne(
+      createInvoiceProductDto.stockProductId,
+    );
+    return await invoiceProduct.save();
+  }
+
+  async findOneInoviceProduct(id: string) {
+    return await InvoiceProduct.findOneByOrFail({ id });
+  }
+
   async create(createInvoiceDto: CreateInvoiceDto) {
-    //FIXME check if working
-    const { firm, client, products, ...invoiceData } = createInvoiceDto;
-    const addedFirm = await this.firmService.findOne(firm.id);
-    const addedClient = await this.clientService.findOne(firm.id);
+    const { firmId, clientId, products, ...invoiceData } = createInvoiceDto;
+    const addedFirm = await this.firmService.findOne(firmId);
+    const addedClient = await this.clientService.findOne(clientId);
 
     const invoice = new Invoice();
     assignProperties(invoice, invoiceData);
     invoice.firm = addedFirm;
     invoice.client = addedClient;
+    const savedInvoice = await invoice.save();
 
-    const invoiceProducts = await products.map(async (product) => {
-      const prod = new InvoiceProduct();
-      assignProperties(prod, product);
-      return await prod.save();
-    });
+    const invoiceProducts = await Promise.all(
+      products.map(async (product) => {
+        return await this.createInvoiceProduct({
+          invoiceId: savedInvoice.id,
+          stockProductId: product.id,
+          quantity: product.quantity,
+        });
+      }),
+    );
 
     return {
-      invoiceData: await invoice.save(),
+      invoiceData: savedInvoice,
       invoiceProducts,
     };
   }

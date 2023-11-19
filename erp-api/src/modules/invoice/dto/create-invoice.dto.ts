@@ -1,14 +1,10 @@
-import { Client } from 'src/modules/client/entities/client.entity';
-import { Firm } from 'src/modules/firm/entities/firm.entity';
-import { InvoiceProduct } from '../entities/invoice-product.entity';
-
 export class CreateInvoiceDto {
   invoiceNumber: string;
   issueDate: Date;
   deliveryDate: Date;
   paymentDate: Date;
   isPaid: boolean;
-  firm: Firm;
-  client: Client;
-  products: InvoiceProduct[];
+  firmId: string;
+  clientId: string;
+  products: { id: string; quantity: number }[];
 }
