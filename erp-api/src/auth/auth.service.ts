@@ -136,6 +136,10 @@ export class AuthService {
     await BlacklistedToken.remove(tokens);
   }
 
+  async getBlackListedTokens() {
+    return await BlacklistedToken.find();
+  }
+
   async testMethod() {
     return this.isTokenBlacklisted(
       '1eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJzdWIiOiJkMDEzYTdmZS00NTllLTQ5YzYtYmE2ZS02MDJjNDBmNWYxZWYiLCJpYXQiOjE2OTk5NzkyMTR9.ZebJ6xePngyQ-PrmCNxnKqEKvEEJ6z-RKwb4L34kZH8',
