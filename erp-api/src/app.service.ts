@@ -28,16 +28,6 @@ export class AppService {
         discount: 0,
         flatRateTax: FlatRateTax.RATE_3,
       }),
-      invoice: await this.invoiceService.create({
-        invoiceNumber: '123/ds',
-        deliveryDate: new Date(),
-        issueDate: new Date(Date.now()),
-        paymentDate: new Date(Date.now() + 100000000000000),
-        isPaid: false,
-        firm: await this.firmService.findOne(''),
-        client: await this.clientService.findOne(''),
-        products: [],
-      }),
     };
     return obj;
   }
