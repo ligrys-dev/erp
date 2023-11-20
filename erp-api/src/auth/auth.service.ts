@@ -2,6 +2,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  OnApplicationBootstrap,
   UnauthorizedException,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
@@ -18,7 +19,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnApplicationBootstrap {
   constructor(
     private readonly httpService: HttpService,
     private readonly usersService: UsersService,
@@ -105,7 +106,7 @@ export class AuthService {
 
   async logout(req: Request) {
     const usedToken = req.headers.authorization.split(' ')[1];
-    const key = 'expired-tokens';
+    const key = this.configService.get('CACHE_BLACKLISTED_TOKENS_KEY');
 
     const blacklistedToken = new BlacklistedToken();
     blacklistedToken.token = usedToken;
@@ -121,7 +122,9 @@ export class AuthService {
 
   async isTokenBlacklisted(token: string) {
     const blacklistedTokens: string[] =
-      await this.cacheManager.get('expired-tokens');
+      (await this.cacheManager.get(
+        this.configService.get('CACHE_BLACKLISTED_TOKENS_KEY'),
+      )) ?? [];
 
     return !!blacklistedTokens.find((el) => el === token);
   }
@@ -137,7 +140,15 @@ export class AuthService {
   }
 
   async getBlackListedTokens() {
-    return await BlacklistedToken.find();
+    await this.removeExpiredTokens();
+    return (await BlacklistedToken.find()).map((el) => el.token);
+  }
+
+  async onApplicationBootstrap() {
+    await this.cacheManager.set(
+      this.configService.get('CACHE_BLACKLISTED_TOKENS_KEY'),
+      await this.getBlackListedTokens(),
+    );
   }
 
   async testMethod() {

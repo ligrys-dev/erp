@@ -33,7 +33,14 @@ export class AppService {
   }
 
   async test2() {
-    return await this.cacheManager.get('expired-tokens');
+    const bar = await this.cacheManager.get(
+      process.env.CACHE_BLACKLISTED_TOKENS_KEY,
+    );
+
+    console.log(bar);
+    return {
+      foo: bar,
+    };
   }
 
   getHello(): string {
