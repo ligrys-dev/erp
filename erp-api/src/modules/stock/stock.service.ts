@@ -1,15 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateStockProductDto } from './dto/create-stock-product.dto';
 import { UpdateStockProductDto } from './dto/update-stock-product.dto';
 import { StockProduct } from './entities/stock-product.entity';
 import { assignProperties } from 'src/utils/assign-properties';
+import { FlatRateTax, VatRate } from 'src/types';
 
 @Injectable()
 export class StockService {
-  async create(createStockDto: CreateStockProductDto) {
+  async create(createStockProductDto: CreateStockProductDto) {
+    if (!Object.values(VatRate).includes(createStockProductDto.vatRate)) {
+      throw new UnprocessableEntityException(
+        `Invalid VatRate value: ${createStockProductDto.vatRate}`,
+      );
+    }
+
+    if (
+      !Object.values(FlatRateTax).includes(createStockProductDto.flatRateTax)
+    ) {
+      throw new UnprocessableEntityException(
+        `Invalid FlatRateTax value: ${createStockProductDto.flatRateTax}`,
+      );
+    }
+
     const stockProduct = new StockProduct();
-    assignProperties(stockProduct, createStockDto);
-    return await stockProduct.save();
+    assignProperties(stockProduct, createStockProductDto);
+
+    const { id } = await stockProduct.save();
+    return { id };
   }
 
   async findAll() {
