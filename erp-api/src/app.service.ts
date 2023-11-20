@@ -10,16 +10,13 @@ import { Cache } from 'cache-manager';
 @Injectable()
 export class AppService {
   constructor(
-    private firmService: FirmService,
     private clientService: ClientService,
-    private invoiceService: InvoiceService,
     private stockService: StockService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async test() {
     const obj = {
-      firm: await this.firmService.create({ name: 'test', taxIdNumber: 123 }),
       client: await this.clientService.create({ name: 'testowy' }),
       stock: await this.stockService.create({
         name: 'testowy obj',

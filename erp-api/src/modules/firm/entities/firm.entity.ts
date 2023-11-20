@@ -16,11 +16,11 @@ export class Firm extends BaseEntity {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ type: 'numeric' })
   taxIdNumber: number;
 
-  @Column({ nullable: true })
-  bankAccountNumber: number;
+  @Column({ type: 'varchar', length: 26, nullable: true })
+  bankAccountNumber: string;
 
   //FIXME
   @ManyToOne(() => Address)
