@@ -4,15 +4,11 @@ import { Request } from 'express';
 import { SaveUserEntity } from 'src/types';
 import { LocalAuthGuard } from 'src/common/guards/local-auth.guard';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
-  @Get('/allegro')
-  loginToAllegro() {
-    return this.authService.loginIntoAllegro();
-  }
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
