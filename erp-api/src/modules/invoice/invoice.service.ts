@@ -54,18 +54,18 @@ export class InvoiceService {
       }),
     );
 
-    return {
-      invoiceData: savedInvoice,
-      invoiceProducts,
-    };
+    return { invoiceId: savedInvoice.id };
   }
 
   async findAll() {
-    return await Invoice.find();
+    return await Invoice.find({ relations: ['firm', 'client'] });
   }
 
   async findOne(id: string) {
-    return await Invoice.findOneByOrFail({ id });
+    return await Invoice.findOneOrFail({
+      where: { id },
+      relations: ['firm', 'client', 'products'],
+    });
   }
 
   async update(id: string, updateInvoiceDto: UpdateInvoiceDto) {
