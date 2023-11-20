@@ -13,7 +13,8 @@ export class FirmService {
     assignProperties(firm, firmData);
     // TODO implement adding new address
     firm.address = await Address.findOneByOrFail({ id: addressId });
-    return await firm.save();
+    const { id } = await firm.save();
+    return { id };
   }
 
   async findAll() {
