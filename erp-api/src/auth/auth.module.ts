@@ -12,21 +12,30 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlacklistedToken } from './entities/blacklistedToken.entity';
+import { AllegroAuthService } from './allegro-auth.service';
+import { AllegroAuthController } from './allegro-auth.controller';
+import { AllegroToken } from './entities/allegro-token.entity';
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
     HttpModule,
     PassportModule,
-    TypeOrmModule.forFeature([BlacklistedToken]),
+    TypeOrmModule.forFeature([BlacklistedToken, AllegroToken]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: getAuthConfig,
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, RefreshTokenStrategy],
+  controllers: [AuthController, AllegroAuthController],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    RefreshTokenStrategy,
+    AllegroAuthService,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}
