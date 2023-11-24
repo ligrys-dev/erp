@@ -44,7 +44,6 @@ export class AllegroAuthService {
   }
 
   async getAccesToken(code: string) {
-    console.log({ code });
     const authorizationHeader = Buffer.from(
       `${this.CLIENT_ID}:${this.CLIENT_SECRET}`,
     ).toString('base64');
@@ -81,31 +80,55 @@ export class AllegroAuthService {
     }
   }
 
-  async loginIntoAllegro(): Promise<{ access_token: string }> {
-    const authHeader = `Basic ${Buffer.from(
-      `${this.configService.get('ALLEGRO_CLIENT_ID')}:${this.configService.get(
-        'ALLEGRO_CLIENT_SECRET',
-      )}`,
-    ).toString('base64')}`;
-
+  async getRefreshToken(code: string) {
     try {
+      const data = {
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: this.REDIRECT_URI,
+      };
+
       const response = await firstValueFrom(
-        this.httpService.post(
-          this.configService.get('ALLEGRO_AUTH_URL'),
-          'grant_type=client_credentials',
-          {
-            headers: {
-              Authorization: authHeader,
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
+        this.httpService.post(this.TOKEN_URL, data, {
+          auth: {
+            username: this.CLIENT_ID,
+            password: this.CLIENT_SECRET,
           },
-        ),
+        }),
       );
 
-      return { access_token: response.data.access_token };
+      const tokens = response.data;
+      const refreshToken = tokens.refresh_token;
+      return refreshToken;
     } catch (error) {
-      console.error(error);
-      throw new Error('Something went wrong');
+      console.error('Failed to get refresh token:', error.response.data);
+      throw new Error('Failed to retrieve refresh token');
+    }
+  }
+
+  async getNextToken(refreshToken: string): Promise<string> {
+    try {
+      const data = {
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        redirect_uri: this.REDIRECT_URI,
+      };
+
+      const response = await firstValueFrom(
+        this.httpService.post(this.TOKEN_URL, data, {
+          auth: {
+            username: this.CLIENT_ID,
+            password: this.CLIENT_SECRET,
+          },
+        }),
+      );
+
+      const tokens = response.data;
+      const nextAccessToken = tokens.access_token;
+      return nextAccessToken;
+    } catch (error) {
+      console.error('Failed to get next access token:', error.response.data);
+      throw new Error('Failed to retrieve next access token');
     }
   }
 }
